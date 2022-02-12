@@ -1,6 +1,6 @@
 # Deno Sass 🦕
 
-![alt text](/assets/DenoGrass.jpg)
+<img src="https://github.com/hironichu/denosass/raw/main/assets/DenoGrass.jpg" height="auto">
 > A Deno+Wasm Sass compiler 
 ----
 
