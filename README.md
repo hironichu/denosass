@@ -15,7 +15,7 @@ I know that there are some errors that might now be shown at compile time, but n
 ## Command line
 ```bash
 # Install via 
-deno install --allow-env --allow-write --allow-read --unstable -n denosass https://deno.land/x/denosass/cli.ts
+deno install --allow-env --allow-write --allow-read --allow-net --unstable -n denosass https://deno.land/x/denosass/cli.ts
 # Basic exemple
 
 # This will take every file in the dir (non recursively) and compile then while keeping their name and adding .min.css, into the ./out folder.

@@ -5,12 +5,12 @@
  * 
  */
 import sass from "./mod.ts";
-import { parse , normalize} from "https://deno.land/std@0.125.0/path/mod.ts";
 import { SassFormats } from "./src/types/module.types.ts"
 import { parse as CMDParse } from "https://deno.land/std@0.125.0/flags/mod.ts";
 const readPerm = { name: "read" } as const;
 const writePerm = { name: "write" } as const;
 const envPerm = { name: "env" } as const;
+const netPerm = { name: "net" } as const;
 export const warn = (msg: string) => console.warn(`🟡 %c[%cDenoSass%c]%c ${msg}`, 'color: yellow', 'color: orange', 'color: yellow', 'color: yellow;')
 export const error = (msg: string) => console.error(`🛑 %c[%cDenoSass%c]%c ${msg}`, 'color: yellow', 'color: red', 'color: yellow', 'color: red;')
 export const log = (msg: string) => console.log(`🔵%c[%cDenoSass%c]%c ${msg}`, 'color: red', 'color: cyan', 'color: red', 'color: gray;')
@@ -19,7 +19,8 @@ if (import.meta.main) {
   const canRead = await Deno.permissions.query(readPerm)
   const canWrite = await Deno.permissions.query(writePerm)
   const canEnv = await Deno.permissions.query(envPerm)
-  if (canRead.state === "granted" && canWrite.state === "granted" && canEnv.state === "granted") {
+  const canNet = await Deno.permissions.query(netPerm)
+  if (canRead.state === "granted" && canWrite.state === "granted" && canEnv.state === "granted" && canNet.state === "granted") {
     //Parse the Deno.args, get the first command : compile , every argument that doesnt start with a - or -- is a string to be compiled
     const args = Deno.args
     const command = args[0]
@@ -43,6 +44,7 @@ if (import.meta.main) {
           destFile: filename !== "" ?  filename : undefined,
           format: format as SassFormats
         })
+        Deno.exit(0)
       } else {
         const output = SassData.to_string()
         if (!output) {
@@ -53,13 +55,18 @@ if (import.meta.main) {
           output.forEach(file => {
             Deno.stdout.writeSync(new TextEncoder().encode(file as string))
           })
+          Deno.exit(0)
         } else {
           Deno.stdout.writeSync(new TextEncoder().encode(output as string))
+          Deno.exit(0)
         }
       }
+    } else {
+      log('Usage: denosass compile --format <compressed | expanded> --out ./dir --name nameexported string | string[]')
+      Deno.exit(1)
     }
   } else {
-    error("You need to grant read, write and env permissions to run this script.")
+    error("You need to grant read, write, env, net permissions to run this script.")
     Deno.exit(1)
   }
 }
