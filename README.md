@@ -148,8 +148,43 @@ I need to edit some stuff so the Deno namespace doesn't stop the code from
 running in modern browsers, but it should work as the older one did.
 
 ## Deploy
-
 This module should work today, with the entire featureset on Deploy
+
+## Core API
+By default, i made a wrapper around the function exported form the Wasm code, this is because I want to have some nice feature around (such as multiple file support, export to file/buffer etc...)
+
+however you can directly use these functions if you dont need the additional features.
+
+```ts
+import { str, file } from "./wasm/grass.deno.js";
+
+//From a string, note that it will resolve any imported module from import.meta.url (the current dir of the typescript file being executed.)
+const fromstr = str(`
+  @import 'superlib';
+`,
+  { 
+  load_paths: [
+    "./libscss", 
+    "/Users/ekko/Documents/testscss"
+  ], 
+  style: "expanded", 
+  quiet: true 
+});
+console.log(fromstr)
+
+//And from a file
+const fromfile = file(`./myscss/myscss.scss`,
+  { 
+  load_paths: [
+    "./libscss",
+    "/Users/ekko/Documents/testscss"
+  ], 
+  style: "expanded", 
+  quiet: true 
+});
+console.log(fromfile)
+///
+```
 
 ---
 
