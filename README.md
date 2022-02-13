@@ -20,7 +20,7 @@ no crash so far.
 
 ```bash
 # Install via 
-deno install --allow-env --allow-write --allow-read --allow-net --unstable -n denosass https://deno.land/x/denosass/cli.ts
+deno install --allow-env --allow-write --allow-read --allow-net --unstable -n denosass https://raw.githubusercontent.com/hironichu/denosass/main/cli.ts
 # Basic exemple
 
 # This will take every file in the dir (non recursively) and compile then while keeping their name and adding .min.css, into the ./out folder.

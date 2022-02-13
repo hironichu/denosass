@@ -43,7 +43,6 @@ if (import.meta.main) {
     canRead.state === "granted" && canWrite.state === "granted" &&
     canEnv.state === "granted" && canNet.state === "granted"
   ) {
-    //Parse the Deno.args, get the first command : compile , every argument that doesnt start with a - or -- is a string to be compiled
     const args = Deno.args;
     const command = args[0];
     const parsed = CMDParse(args.slice(1), {
@@ -87,7 +86,6 @@ if (import.meta.main) {
       log(
         "Usage: denosass compile --format <compressed | expanded> --out ./dir --name nameexported string | string[]",
       );
-      Deno.exit(1);
     }
   } else {
     error(
