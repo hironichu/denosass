@@ -40,6 +40,15 @@ denosass compile -f compressed -o ./out ./scssdir ./anotherfolder ./afile.scss
 
 #Last but not least, if you dont set -o (output dir) denosass will write content to the STDOUT. (using Deno.stdout.writeSync())
 denosass compile -f compressed ./some/folder ./or/some/file.scss
+
+#CLI Support also STDIN, if you set no argument you can use the Standard input to compile Sass.
+denosass compile
+🔵[DenoSass] Write your sass code to stdin and press CTRL-D to compile
+body {
+color:red;
+}
+body{color:red}% 
+
 ```
 
 Please note that if the output folder doesn't exist, Denosass will create it, if
@@ -79,6 +88,18 @@ const compiler = sass(`
     }
   }
 `);
+```
+
+sass take an optional object as an argument, which contains the ability to set the format for the next function call (.to_string..)
+here is an example :
+```ts
+const from_files = sass(`...`, {
+    //The load_paths will allow you to import files that are somewhere else in your system, note that this feature is still unstable !
+    load_paths: ["some/relative/path", "/or/absolute/include/path"],
+    quiet: true,// Optional, Define if you want to see Sass warning or not. 
+    style: "compressed"//Optional, by default "compressed" is selected.
+  }
+)
 ```
 
 Once you're done, call one of the function, if you dont set a format, the
