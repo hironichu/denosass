@@ -15,7 +15,7 @@ import {
   InputType,
   SassFormats,
   SassObject,
-  SassOptions,
+  SassOptions
 } from "./types/module.types.ts";
 export const warn = (msg: string) =>
   console.warn(
@@ -75,35 +75,44 @@ class Sass implements SassObject {
   #outmode: 0 | 1 | 2;
   private readonly encoder = new TextEncoder();
   private readonly decoder = new TextDecoder();
-  constructor(input: InputType) {
+  public options: SassOptions;
+
+  constructor(input: InputType, options: SassOptions = {load_paths:[Deno.cwd()], style: "compressed", quiet:true }) {
     this.#input = input;
     this.#current = "";
     this.#mode = "file";
     this.#outmode = 0;
     this.output = "";
+    this.options = {
+      load_paths: options.load_paths || [Deno.cwd()],
+      style: options.style || "compressed",
+      quiet: options.quiet || true,
+    }
     return this.#checkType();
   }
+
   /**
    * @name to_string
    * @param format SassFormats "compressed" | "expanded"
    * @returns Sass.output
    */
-  public to_string(format: SassFormats = "compressed") {
+  public to_string(format?: SassFormats) {
     if (this.#outmode === 0) {
       error(`No Output mode has been set during the process.`);
       return false;
     }
+    if (typeof format !== 'undefined') this.options.style = format;
     if (typeof this.#current === "string" || this.#current instanceof Map) {
       if (this.#outmode === 1) {
         if (this.#mode === "string") {
-          this.output = denosass.str(this.#current as string, format);
+          this.output = denosass.str(this.#current as string, this.options);
         } else {
-          this.output = denosass.file(this.#current as string, format);
+          this.output = denosass.file(this.#current as string, this.options);
         }
       } else if (this.#outmode === 2) {
         this.output = [...(this.#current as Map<string, string>)].reduce(
           (acc, file) => {
-            acc.set(file[0], denosass.file(file[1], format));
+            acc.set(file[0], denosass.file(file[1], this.options));
             return acc;
           },
           new Map<string, string>(),
@@ -120,25 +129,26 @@ class Sass implements SassObject {
    * @param format SassFormats : "compressed" | "expanded"
    * @returns Sass
    */
-  public to_buffer(format: SassFormats = "compressed") {
+  public to_buffer(format?: SassFormats) {
     if (this.#outmode === 0) {
       error(`No Output mode has been set during the process.`);
       return false;
     }
+    if (typeof format !== 'undefined') this.options.style = format;
     if (this.#outmode === 1) {
       if (this.#mode === "string") {
         this.output = this.encoder.encode(
-          denosass.str(this.#current as string, format),
+          denosass.str(this.#current as string, this.options),
         );
       } else {
         this.output = this.encoder.encode(
-          denosass.file(this.#current as string, format),
+          denosass.file(this.#current as string, this.options),
         );
       }
     } else if (this.#outmode === 2) {
       this.output = [...(this.#current as Map<string, string>)].reduce(
         (acc, file) => {
-          acc.set(file[0], this.encoder.encode(denosass.file(file[1], format)));
+          acc.set(file[0], this.encoder.encode(denosass.file(file[1], this.options)));
           return acc;
         },
         new Map<string, Uint8Array>(),
@@ -343,6 +353,6 @@ class Sass implements SassObject {
  * @param _options unknown
  * @returns Sass
  */
-export function sass(input: InputType, _options?: SassOptions): Sass {
-  return new Sass(input);
+export function sass(input: InputType, options?: SassOptions): Sass {
+  return new Sass(input, options);
 }

@@ -146,7 +146,7 @@ compiler.to_file({
 As of today, some feature are not available in browsers, (such as files/folder),
 I need to edit some stuff so the Deno namespace doesn't stop the code from
 running in modern browsers, but it should work as the older one did.
-
+g
 ## Deploy
 This module should work today, with the entire featureset on Deploy
 

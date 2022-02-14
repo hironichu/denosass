@@ -1,14 +1,23 @@
 /* tslint:disable */
 /* eslint-disable */
+export type SassOptions = {
+  load_paths: string[];
+  style: "expanded" | "compressed";
+  quiet: boolean;
+}
 /**
- * @param {string} p
- * @param {string | undefined} format
- * @returns {string}
- */
-export function str(p: string, format?: string): string;
+* @param {string} p
+* @param {any} options
+* @returns {string}
+*/
+export function str(p: string, options: SassOptions): string;
 /**
- * @param {string} path
- * @param {string | undefined} format
- * @returns {string}
- */
-export function file(path: string, format?: string): string;
+* @returns {any}
+*/
+export function get_config(): SassOptions;
+/**
+* @param {string} path
+* @param {any} jsconfig
+* @returns {string}
+*/
+export function file(path: string, jsconfig: SassOptions): string;

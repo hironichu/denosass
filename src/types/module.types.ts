@@ -3,8 +3,12 @@ export type ExportOptions = {
   destFile?: string;
   format?: SassFormats;
 };
-export type SassOptions = {};
 
+export type SassOptions = {
+  load_paths?: string[];
+  style?: SassFormats;
+  quiet?: boolean;
+}
 export type SassFormats = "expanded" | "compressed";
 
 export type InputType = string | string[] | Uint8Array;
