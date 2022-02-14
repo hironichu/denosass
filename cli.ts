@@ -5,6 +5,7 @@
 import sass from "./mod.ts";
 import { SassFormats } from "./src/types/module.types.ts";
 import { parse as CMDParse } from "https://deno.land/std@0.125.0/flags/mod.ts";
+import { readAll } from "https://deno.land/std/streams/conversion.ts "
 const readPerm = { name: "read" } as const;
 const writePerm = { name: "write" } as const;
 const envPerm = { name: "env" } as const;
@@ -26,7 +27,7 @@ export const error = (msg: string) =>
     "color: red;",
   );
 export const log = (msg: string) =>
-  console.log(
+  console.info(
     `🔵%c[%cDenoSass%c]%c ${msg}`,
     "color: red",
     "color: cyan",
@@ -43,7 +44,6 @@ if (import.meta.main) {
     canRead.state === "granted" && canWrite.state === "granted" &&
     canEnv.state === "granted" && canNet.state === "granted"
   ) {
-    //Parse the Deno.args, get the first command : compile , every argument that doesnt start with a - or -- is a string to be compiled
     const args = Deno.args;
     const command = args[0];
     const parsed = CMDParse(args.slice(1), {
@@ -51,6 +51,7 @@ if (import.meta.main) {
         "format": "f",
         "out": "o",
         "name": "n",
+        "paths": "p",
       },
       string: ["out", "name", "format", "o", "f", "n"],
     });
@@ -59,35 +60,85 @@ if (import.meta.main) {
       const format = parsed.f || parsed.format || undefined;
       const outdir = parsed.o || parsed.out || undefined;
       const filename = parsed.n || parsed.name || undefined;
-      const SassData = sass(parsed._ as string[]);
-      if (outdir) {
-        SassData.to_file({
-          destDir: outdir,
-          destFile: filename !== "" ? filename : undefined,
-          format: format as SassFormats,
-        });
-        Deno.exit(0);
-      } else {
-        const output = SassData.to_string();
-        if (!output) {
-          error("The output is empty");
-          Deno.exit(1);
+      const paths = parsed.p || parsed.paths || undefined;
+      if (parsed._.length === 0) {
+        //read std in until EOF
+        log(`Write your sass code to stdin and press CTRL-D to compile`);
+        let include_paths;
+        if (paths && typeof paths === "string") {
+          include_paths = paths.split(",");
+        } else {
+          include_paths = ["./"]
         }
-        if (output instanceof Map) {
-          output.forEach((file) => {
-            Deno.stdout.writeSync(new TextEncoder().encode(file as string));
+        const stdin = await readAll(Deno.stdin);
+        const sass_result = sass(stdin, {
+          load_paths: include_paths,
+          quiet: true,
+          style: format,
+        });
+        if (outdir) {
+          sass_result.to_file({
+            destDir: outdir,
+            destFile: filename !== "" ? filename : undefined,
+            format: format as SassFormats,
           });
           Deno.exit(0);
         } else {
-          Deno.stdout.writeSync(new TextEncoder().encode(output as string));
+          const output = sass_result.to_string();
+          if (!output) {
+            error("The output is empty");
+            Deno.exit(1);
+          }
+          if (output instanceof Map) {
+            output.forEach((file) => {
+              Deno.stdout.writeSync(new TextEncoder().encode(file as string));
+            });
+            Deno.exit(0);
+          } else {
+            Deno.stdout.writeSync(new TextEncoder().encode(output as string));
+            Deno.exit(0);
+          }
+        }
+      } else {
+        let include_paths;
+        if (paths && typeof paths === "string") {
+          include_paths = paths.split(",");
+        } else {
+          include_paths = ["./"]
+        }
+        const SassData = sass(parsed._ as string[], {
+          load_paths: include_paths,
+          quiet: true,
+          style: format,
+        });
+        if (outdir) {
+          SassData.to_file({
+            destDir: outdir,
+            destFile: filename !== "" ? filename : undefined,
+            format: format as SassFormats,
+          });
           Deno.exit(0);
+        } else {
+          const output = SassData.to_string();
+          if (!output) {
+            error("The output is empty");
+            Deno.exit(1);
+          }
+          if (output instanceof Map) {
+            output.forEach((file) => {
+              Deno.stdout.writeSync(new TextEncoder().encode(file as string));
+            });
+            Deno.exit(0);
+          } else {
+            Deno.stdout.writeSync(new TextEncoder().encode(output as string));
+            Deno.exit(0);
+          }
         }
       }
     } else {
       log(
         "Usage: denosass compile --format <compressed | expanded> --out ./dir --name nameexported string | string[]",
       );
-      Deno.exit(1);
     }
   } else {
     error(

@@ -20,7 +20,7 @@ no crash so far.
 
 ```bash
 # Install via 
-deno install --allow-env --allow-write --allow-read --allow-net --unstable -n denosass https://deno.land/x/denosass/cli.ts
+deno install --allow-env --allow-write --allow-read --allow-net --unstable -n denosass https://raw.githubusercontent.com/hironichu/denosass/main/cli.ts
 # Basic exemple
 
 # This will take every file in the dir (non recursively) and compile then while keeping their name and adding .min.css, into the ./out folder.
@@ -40,6 +40,15 @@ denosass compile -f compressed -o ./out ./scssdir ./anotherfolder ./afile.scss
 
 #Last but not least, if you dont set -o (output dir) denosass will write content to the STDOUT. (using Deno.stdout.writeSync())
 denosass compile -f compressed ./some/folder ./or/some/file.scss
+
+#CLI Support also STDIN, if you set no argument you can use the Standard input to compile Sass.
+denosass compile
+🔵[DenoSass] Write your sass code to stdin and press CTRL-D to compile
+body {
+color:red;
+}
+body{color:red}% 
+
 ```
 
 Please note that if the output folder doesn't exist, Denosass will create it, if
@@ -79,6 +88,18 @@ const compiler = sass(`
     }
   }
 `);
+```
+
+sass take an optional object as an argument, which contains the ability to set the format for the next function call (.to_string..)
+here is an example :
+```ts
+const from_files = sass(`...`, {
+    //The load_paths will allow you to import files that are somewhere else in your system, note that this feature is still unstable !
+    load_paths: ["some/relative/path", "/or/absolute/include/path"],
+    quiet: true,// Optional, Define if you want to see Sass warning or not. 
+    style: "compressed"//Optional, by default "compressed" is selected.
+  }
+)
 ```
 
 Once you're done, call one of the function, if you dont set a format, the
@@ -146,10 +167,45 @@ compiler.to_file({
 As of today, some feature are not available in browsers, (such as files/folder),
 I need to edit some stuff so the Deno namespace doesn't stop the code from
 running in modern browsers, but it should work as the older one did.
-
+g
 ## Deploy
-
 This module should work today, with the entire featureset on Deploy
+
+## Core API
+By default, i made a wrapper around the function exported form the Wasm code, this is because I want to have some nice feature around (such as multiple file support, export to file/buffer etc...)
+
+however you can directly use these functions if you dont need the additional features.
+
+```ts
+import { str, file } from "./wasm/grass.deno.js";
+
+//From a string, note that it will resolve any imported module from import.meta.url (the current dir of the typescript file being executed.)
+const fromstr = str(`
+  @import 'superlib';
+`,
+  { 
+  load_paths: [
+    "./libscss", 
+    "/Users/ekko/Documents/testscss"
+  ], 
+  style: "expanded", 
+  quiet: true 
+});
+console.log(fromstr)
+
+//And from a file
+const fromfile = file(`./myscss/myscss.scss`,
+  { 
+  load_paths: [
+    "./libscss",
+    "/Users/ekko/Documents/testscss"
+  ], 
+  style: "expanded", 
+  quiet: true 
+});
+console.log(fromfile)
+///
+```
 
 ---
 
