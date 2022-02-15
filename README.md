@@ -4,7 +4,7 @@
 > A Deno+Wasm Sass compiler
 ----
 
-Welcome to the new re-writen Deno Sass module, with complete feature set
+Welcome to the new re-written Deno Sass module, with complete feature set
 (import, variables, functions, mixins, and even CLI !)
 
 I spent 24h updating the module to make it work, it now has a new name
@@ -21,7 +21,7 @@ no crash so far.
 ```bash
 # Install via 
 deno install --allow-env --allow-write --allow-read --allow-net --unstable -n denosass https://raw.githubusercontent.com/hironichu/denosass/main/cli.ts
-# Basic exemple
+# Basic example
 
 # This will take every file in the dir (non recursively) and compile then while keeping their name and adding .min.css, into the ./out folder.
 denosass compile -f compressed -o ./out ./scssdir
@@ -38,7 +38,7 @@ denosass compile -f compressed -o ./out ./scssdir ./anotherfolder ./afile.scss
 # and will also compile the ./afile.scss to its own 
 # (if this file includes modules within the other folder, Denosass will include them.)
 
-#Last but not least, if you dont set -o (output dir) denosass will write content to the STDOUT. (using Deno.stdout.writeSync())
+#Last but not least, if you don't set -o (output dir) denosass will write content to the STDOUT. (using Deno.stdout.writeSync())
 denosass compile -f compressed ./some/folder ./or/some/file.scss
 
 #CLI Support also STDIN, if you set no argument you can use the Standard input to compile Sass.
@@ -102,7 +102,7 @@ const from_files = sass(`...`, {
 )
 ```
 
-Once you're done, call one of the function, if you dont set a format, the
+Once you're done, call one of the function, if you don't set a format, the
 default one will be "compressed"
 
 ```ts
@@ -116,7 +116,7 @@ WebAssembly VM at compile time, Deno checks if everything is right to compile.
 
 Here you can export to a folder the content you compiled : same as before,
 format is not mandatory if you set destFile , Deno will output content in this
-file, if you dont, a untitled.min.css file will be created
+file, if you don't, a untitled.min.css file will be created
 
 ```ts
 compiler.to_file({
@@ -149,7 +149,7 @@ const compile = sass(Deno.readFileSync("somefile.scss"));
 For now, if you set a filename during the export to File, (both in CLI and in
 the API), Denosass will append every file you have imported into a single one
 with that name, this is useful if you want to build a static app with one single
-CSS file, but it might now be conveinient.
+CSS file, but it might now be convenient.
 
 That's why setting a name isn't required by default.
 
@@ -174,7 +174,7 @@ This module should work today, with the entire featureset on Deploy
 ## Core API
 By default, i made a wrapper around the function exported form the Wasm code, this is because I want to have some nice feature around (such as multiple file support, export to file/buffer etc...)
 
-however you can directly use these functions if you dont need the additional features.
+however you can directly use these functions if you don't need the additional features.
 
 ```ts
 import { str, file } from "./wasm/grass.deno.js";
