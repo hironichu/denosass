@@ -15,7 +15,7 @@ import {
   InputType,
   SassFormats,
   SassObject,
-  SassOptions
+  SassOptions,
 } from "./types/module.types.ts";
 export const warn = (msg: string) =>
   console.warn(
@@ -77,7 +77,14 @@ class Sass implements SassObject {
   private readonly decoder = new TextDecoder();
   public options: SassOptions;
 
-  constructor(input: InputType, options: SassOptions = {load_paths:[Deno.cwd()], style: "compressed", quiet:true }) {
+  constructor(
+    input: InputType,
+    options: SassOptions = {
+      load_paths: [Deno.cwd()],
+      style: "compressed",
+      quiet: true,
+    },
+  ) {
     this.#input = input;
     this.#current = "";
     this.#mode = "file";
@@ -87,7 +94,7 @@ class Sass implements SassObject {
       load_paths: options.load_paths || [Deno.cwd()],
       style: options.style || "compressed",
       quiet: options.quiet || true,
-    }
+    };
     return this.#checkType();
   }
 
@@ -101,7 +108,7 @@ class Sass implements SassObject {
       error(`No Output mode has been set during the process.`);
       return false;
     }
-    if (typeof format !== 'undefined') this.options.style = format;
+    if (typeof format !== "undefined") this.options.style = format;
     if (typeof this.#current === "string" || this.#current instanceof Map) {
       if (this.#outmode === 1) {
         if (this.#mode === "string") {
@@ -134,7 +141,7 @@ class Sass implements SassObject {
       error(`No Output mode has been set during the process.`);
       return false;
     }
-    if (typeof format !== 'undefined') this.options.style = format;
+    if (typeof format !== "undefined") this.options.style = format;
     if (this.#outmode === 1) {
       if (this.#mode === "string") {
         this.output = this.encoder.encode(
@@ -148,7 +155,10 @@ class Sass implements SassObject {
     } else if (this.#outmode === 2) {
       this.output = [...(this.#current as Map<string, string>)].reduce(
         (acc, file) => {
-          acc.set(file[0], this.encoder.encode(denosass.file(file[1], this.options)));
+          acc.set(
+            file[0],
+            this.encoder.encode(denosass.file(file[1], this.options)),
+          );
           return acc;
         },
         new Map<string, Uint8Array>(),
