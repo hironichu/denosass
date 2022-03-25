@@ -1,0 +1,27 @@
+{
+
+  "lint": {
+    "files": {
+      "include": ["src/"],
+      "exclude": ["src/wasm"]
+    },
+    "rules": {
+      "tags": ["recommended"],
+      "include": ["ban-untagged-todo"],
+      "exclude": ["no-unused-vars"]
+    }
+  },
+    "fmt": {
+    "files": {
+      "include": ["src/"],
+      "exclude": ["src/wasm/"]
+    },
+    "options": {
+      "useTabs": false,
+      "lineWidth": 80,
+      "indentWidth": 2,
+      "singleQuote": true,
+      "proseWrap": "preserve"
+    }
+  }
+}

@@ -1,64 +1,16 @@
-// deno-lint-ignore-file
-
-import * as path from "https://deno.land/std@0.131.0/path/mod.ts";
-
 function js_read_fs(importpath) {
-  let url;
-  if (path.isAbsolute(importpath)) {
-    url = path.toFileUrl(
-      path.resolve(importpath),
-      path.resolve(importpath, Deno.cwd()),
-    );
-  } else {
-    url = importpath;
-  }
-  if (js_is_file(importpath)) {
-    const file = Deno.readTextFileSync(url);
-    return file;
-  } else {
-    return "";
-  }
+  console.error("not implemented call.js_read_fs(", importpath, ")");
+  return false;
 }
 
 function js_is_file(importpath) {
-  if (path.isAbsolute(importpath)) {
-    const url = path.toFileUrl(
-      path.resolve(importpath),
-      path.resolve(importpath, Deno.cwd()),
-    );
-    try {
-      const file = Deno.statSync(url);
-      return file.isFile;
-    } catch {
-      return false;
-    }
-  } else {
-    try {
-      const file = Deno.statSync(importpath);
-      return file.isFile;
-    } catch {
-      return false;
-    }
-  }
+  console.error("not implemented call.js_is_file(", importpath, ")");
+  return false;
 }
 
 function js_is_dir(importpath) {
-  if (path.isAbsolute(importpath)) {
-    const url = path.toFileUrl(importpath);
-    try {
-      const file = Deno.statSync(url);
-      return file.isDirectory;
-    } catch {
-      return false;
-    }
-  } else {
-    try {
-      const file = Deno.statSync(importpath);
-      return file.isDirectory;
-    } catch {
-      return false;
-    }
-  }
+  console.error("not implemented call.js_is_dir(", importpath, ")");
+  return false;
 }
 
 const cachedTextDecoder = new TextDecoder("utf-8", {
@@ -286,7 +238,7 @@ export function str(p, options) {
  * @returns {any}
  */
 export function get_config() {
-  var ret = wasm.get_config();
+  const ret = wasm.get_config();
   return takeObject(ret);
 }
 
@@ -303,32 +255,28 @@ function addBorrowedObject(obj) {
  * @returns {string}
  */
 export function file(path, jsconfig) {
-  try {
-    const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
-    var ptr0 = passStringToWasm0(
-      path,
-      wasm.__wbindgen_malloc,
-      wasm.__wbindgen_realloc,
-    );
-    var len0 = WASM_VECTOR_LEN;
-    wasm.file(retptr, ptr0, len0, addBorrowedObject(jsconfig));
-    var r0 = getInt32Memory0()[retptr / 4 + 0];
-    var r1 = getInt32Memory0()[retptr / 4 + 1];
-    var r2 = getInt32Memory0()[retptr / 4 + 2];
-    var r3 = getInt32Memory0()[retptr / 4 + 3];
-    var ptr1 = r0;
-    var len1 = r1;
-    if (r3) {
-      ptr1 = 0;
-      len1 = 0;
-      throw takeObject(r2);
-    }
-    return getStringFromWasm0(ptr1, len1);
-  } finally {
-    wasm.__wbindgen_add_to_stack_pointer(16);
-    heap[stack_pointer++] = undefined;
-    wasm.__wbindgen_free(ptr1, len1);
-  }
+  console.warn(`Not implemented`);
+  // try {
+  //     const retptr = wasm.__wbindgen_add_to_stack_pointer(-16);
+  //     var ptr0 = passStringToWasm0(path, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+  //     var len0 = WASM_VECTOR_LEN;
+  //     wasm.file(retptr, ptr0, len0, addBorrowedObject(jsconfig));
+  //     var r0 = getInt32Memory0()[retptr / 4 + 0];
+  //     var r1 = getInt32Memory0()[retptr / 4 + 1];
+  //     var r2 = getInt32Memory0()[retptr / 4 + 2];
+  //     var r3 = getInt32Memory0()[retptr / 4 + 3];
+  //     var ptr1 = r0;
+  //     var len1 = r1;
+  //     if (r3) {
+  //         ptr1 = 0; len1 = 0;
+  //         throw takeObject(r2);
+  //     }
+  //     return getStringFromWasm0(ptr1, len1);
+  // } finally {
+  //     wasm.__wbindgen_add_to_stack_pointer(16);
+  //     heap[stack_pointer++] = undefined;
+  //     wasm.__wbindgen_free(ptr1, len1);
+  // }
 }
 
 function handleError(f, args) {
@@ -604,15 +552,13 @@ const imports = {
 const wasm_url = new URL("grass.wasm", import.meta.url);
 let wasmCode = "";
 switch (wasm_url.protocol) {
-  case "file:":
-    wasmCode = await Deno.readFile(wasm_url);
-    break;
   case "https:":
   case "http:":
     wasmCode = await (await fetch(wasm_url)).arrayBuffer();
     break;
   default:
     throw new Error(`Unsupported protocol: ${wasm_url.protocol}`);
+    break;
 }
 
 const wasmInstance =
