@@ -47,8 +47,7 @@ denosass compile
 body {
 color:red;
 }
-body{color:red}% 
-
+body{color:red}%
 ```
 
 Please note that if the output folder doesn't exist, Denosass will create it, if
@@ -90,16 +89,16 @@ const compiler = sass(`
 `);
 ```
 
-sass take an optional object as an argument, which contains the ability to set the format for the next function call (.to_string..)
-here is an example :
+sass take an optional object as an argument, which contains the ability to set
+the format for the next function call (.to_string..) here is an example :
+
 ```ts
 const from_files = sass(`...`, {
-    //The load_paths will allow you to import files that are somewhere else in your system, note that this feature is still unstable !
-    load_paths: ["some/relative/path", "/or/absolute/include/path"],
-    quiet: true,// Optional, Define if you want to see Sass warning or not. 
-    style: "compressed"//Optional, by default "compressed" is selected.
-  }
-)
+  //The load_paths will allow you to import files that are somewhere else in your system, note that this feature is still unstable !
+  load_paths: ["some/relative/path", "/or/absolute/include/path"],
+  quiet: true, // Optional, Define if you want to see Sass warning or not.
+  style: "compressed", //Optional, by default "compressed" is selected.
+});
 ```
 
 Once you're done, call one of the function, if you don't set a format, the
@@ -166,44 +165,50 @@ compiler.to_file({
 
 As of today, some feature are not available in browsers, (such as files/folder),
 I need to edit some stuff so the Deno namespace doesn't stop the code from
-running in modern browsers, but it should work as the older one did.
-g
+running in modern browsers, but it should work as the older one did. g
+
 ## Deploy
+
 This module should work today, with the entire featureset on Deploy
 
 ## Core API
-By default, i made a wrapper around the function exported form the Wasm code, this is because I want to have some nice feature around (such as multiple file support, export to file/buffer etc...)
 
-however you can directly use these functions if you don't need the additional features.
+By default, i made a wrapper around the function exported form the Wasm code,
+this is because I want to have some nice feature around (such as multiple file
+support, export to file/buffer etc...)
+
+however you can directly use these functions if you don't need the additional
+features.
 
 ```ts
-import { str, file } from "./wasm/grass.deno.js";
+import { file, str } from "./wasm/grass.deno.js";
 
 //From a string, note that it will resolve any imported module from import.meta.url (the current dir of the typescript file being executed.)
-const fromstr = str(`
+const fromstr = str(
+  `
   @import 'superlib';
 `,
-  { 
-  load_paths: [
-    "./libscss", 
-    "/Users/ekko/Documents/testscss"
-  ], 
-  style: "expanded", 
-  quiet: true 
-});
-console.log(fromstr)
+  {
+    load_paths: [
+      "./libscss",
+      "/Users/ekko/Documents/testscss",
+    ],
+    style: "expanded",
+    quiet: true,
+  },
+);
+console.log(fromstr);
 
 //And from a file
-const fromfile = file(`./myscss/myscss.scss`,
-  { 
+const fromfile = file(`./myscss/myscss.scss`, {
   load_paths: [
     "./libscss",
-    "/Users/ekko/Documents/testscss"
-  ], 
-  style: "expanded", 
-  quiet: true 
+    "/Users/ekko/Documents/testscss",
+  ],
+  style: "expanded",
+  quiet: true,
 });
-console.log(fromfile)
+console.log(fromfile);
 ///
 ```
 

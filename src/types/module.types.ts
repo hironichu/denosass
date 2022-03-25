@@ -8,8 +8,8 @@ export type SassOptions = {
   load_paths?: string[];
   style?: SassFormats;
   quiet?: boolean;
-}
-export type SassFormats = "expanded" | "compressed";
+};
+export type SassFormats = 'expanded' | 'compressed';
 
 export type InputType = string | string[] | Uint8Array;
 export declare interface SassObject {

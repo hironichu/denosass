@@ -5,7 +5,7 @@
 import sass from "./mod.ts";
 import { SassFormats } from "./src/types/module.types.ts";
 import { parse as CMDParse } from "https://deno.land/std@0.125.0/flags/mod.ts";
-import { readAll } from "https://deno.land/std/streams/conversion.ts "
+import { readAll } from "https://deno.land/std/streams/conversion.ts ";
 const readPerm = { name: "read" } as const;
 const writePerm = { name: "write" } as const;
 const envPerm = { name: "env" } as const;
@@ -68,7 +68,7 @@ if (import.meta.main) {
         if (paths && typeof paths === "string") {
           include_paths = paths.split(",");
         } else {
-          include_paths = ["./"]
+          include_paths = ["./"];
         }
         const stdin = await readAll(Deno.stdin);
         const sass_result = sass(stdin, {
@@ -104,7 +104,7 @@ if (import.meta.main) {
         if (paths && typeof paths === "string") {
           include_paths = paths.split(",");
         } else {
-          include_paths = ["./"]
+          include_paths = ["./"];
         }
         const SassData = sass(parsed._ as string[], {
           load_paths: include_paths,
