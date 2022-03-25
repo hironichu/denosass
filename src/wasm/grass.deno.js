@@ -1,3 +1,5 @@
+// deno-lint-ignore-file
+
 import * as path from "https://deno.land/std@0.131.0/path/mod.ts";
 
 function js_read_fs(importpath) {
@@ -59,7 +61,7 @@ function js_is_dir(importpath) {
   }
 }
 
-let cachedTextDecoder = new TextDecoder("utf-8", {
+const cachedTextDecoder = new TextDecoder("utf-8", {
   ignoreBOM: true,
   fatal: true,
 });
@@ -102,7 +104,7 @@ function getObject(idx) {
 
 let WASM_VECTOR_LEN = 0;
 
-let cachedTextEncoder = new TextEncoder("utf-8");
+const cachedTextEncoder = new TextEncoder("utf-8");
 
 const encodeString = function (arg, view) {
   return cachedTextEncoder.encodeInto(arg, view);
@@ -350,13 +352,11 @@ const imports = {
     __wbindgen_string_get: function (arg0, arg1) {
       const obj = getObject(arg1);
       var ret = typeof (obj) === "string" ? obj : undefined;
-      var ptr0 = isLikeNone(ret)
-        ? 0
-        : passStringToWasm0(
-          ret,
-          wasm.__wbindgen_malloc,
-          wasm.__wbindgen_realloc,
-        );
+      var ptr0 = isLikeNone(ret) ? 0 : passStringToWasm0(
+        ret,
+        wasm.__wbindgen_malloc,
+        wasm.__wbindgen_realloc,
+      );
       var len0 = WASM_VECTOR_LEN;
       getInt32Memory0()[arg0 / 4 + 1] = len0;
       getInt32Memory0()[arg0 / 4 + 0] = ptr0;
@@ -613,7 +613,6 @@ switch (wasm_url.protocol) {
     break;
   default:
     throw new Error(`Unsupported protocol: ${wasm_url.protocol}`);
-    break;
 }
 
 const wasmInstance =

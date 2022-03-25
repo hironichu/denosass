@@ -9,7 +9,7 @@ export type SassOptions = {
   style?: SassFormats;
   quiet?: boolean;
 };
-export type SassFormats = "expanded" | "compressed";
+export type SassFormats = 'expanded' | 'compressed';
 
 export type InputType = string | string[] | Uint8Array;
 export declare interface SassObject {
