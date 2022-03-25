@@ -1,0 +1,22 @@
+@mixin primary-header {
+ font-family: "Helvetica", Arial, sans-serif;
+ font-size: 2rem;
+ line-height: 2.5rem;
+ color: #333;
+ text-decoration: underline;
+}
+
+//use this mixing in to make the header look like a link
+@mixin primary-header-link {
+  @include primary-header;
+  text-decoration: none;
+  color: #fff;
+  background-color: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid #333;
+  &:hover {
+    background-color: #fff;
+    color: #333;
+  }
+}

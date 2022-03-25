@@ -1,0 +1,9 @@
+@import "namelib";
+@import "./cssimport.css";
+body {
+  >.super {
+    background: $blue;
+  }
+  background-color: $white;
+  color: $green;
+}

@@ -1,0 +1,7 @@
+@import "mixins";
+@import "some";
+
+//use the mixin primary-header-link
+.primary-header {
+  @include primary-header-link;
+}

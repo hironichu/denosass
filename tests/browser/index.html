@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script type="module">
+    import { str } from 'http://127.0.0.1:5500/src/api.js';
+    console.log(str(`
+      body {
+        background-color: #f0f0f0;
+        >p{
+          color: #000;
+          &:hover{
+            color: #f00;
+          }
+        }
+      }`
+      , {
+        load_paths: [],
+        style: "compressed",
+        quiet: true
+      }))
+  </script>
+</body>
+
+</html>

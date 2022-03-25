@@ -1,0 +1,19 @@
+@import "namelib";
+@import "superlib";
+$content: "Content";
+.anothertestdiv {
+
+  >.superelem {
+    color: red;
+  }
+}
+
+#body, p {
+  >&.super {
+    color: blue;
+    &::after {
+      content: $content;
+      color:red;
+    }
+  }
+}
