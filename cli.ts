@@ -4,8 +4,8 @@
  */
 import sass from "./mod.ts";
 import { SassFormats } from "./src/types/module.types.ts";
-import { parse as CMDParse } from "https://deno.land/std@0.125.0/flags/mod.ts";
-import { readAll } from "https://deno.land/std/streams/conversion.ts ";
+import { parse as CMDParse } from "https://deno.land/std@0.162.0/flags/mod.ts";
+import { readAll } from "https://deno.land/std@0.162.0/streams/conversion.ts";
 const readPerm = { name: "read" } as const;
 const writePerm = { name: "write" } as const;
 const envPerm = { name: "env" } as const;
@@ -57,7 +57,7 @@ if (import.meta.main) {
     });
 
     if (command === "compile") {
-      const format = parsed.f || parsed.format || undefined;
+      const format = <SassFormats>parsed.f || parsed.format || undefined;
       const outdir = parsed.o || parsed.out || undefined;
       const filename = parsed.n || parsed.name || undefined;
       const paths = parsed.p || parsed.paths || undefined;
@@ -74,7 +74,7 @@ if (import.meta.main) {
         const sass_result = sass(stdin, {
           load_paths: include_paths,
           quiet: true,
-          style: format,
+          style: format ?? "compressed",
         });
         if (outdir) {
           sass_result.to_file({

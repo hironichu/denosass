@@ -232,7 +232,7 @@ class Sass implements SassObject {
             typeof ParsedCSs !== 'string'
               ? this.decoder.decode(ParsedCSs)
               : ParsedCSs,
-            { append: true, create: true, mode: 644 },
+            { append: true, create: true, mode: 776 },
           );
         });
       } else {
@@ -241,7 +241,7 @@ class Sass implements SassObject {
           typeof this.output !== 'string'
             ? this.decoder.decode(this.output)
             : this.output,
-          { append: false, create: true, mode: 644 },
+          { append: false, create: true, mode: 776 },
         );
       }
     } else {
@@ -262,7 +262,7 @@ class Sass implements SassObject {
             typeof ParsedCSs !== 'string'
               ? this.decoder.decode(ParsedCSs)
               : ParsedCSs,
-            { append: false, create: true, mode: 644 },
+            { append: false, create: true, mode: 776 },
           );
         });
       } else {
@@ -281,7 +281,7 @@ class Sass implements SassObject {
           typeof this.output !== 'string'
             ? this.decoder.decode(this.output)
             : this.output,
-          { append: false, create: true, mode: 644 },
+          { append: false, create: true, mode: 776 },
         );
       }
     }

@@ -16,6 +16,8 @@ don't know how good it can handle things..
 I know that there are some errors that might now be shown at compile time, but
 no crash so far.
 
+## > ⚠️ This module will soon be re-writen with a new external library called Rsass, it will also be using FFI for the Deno port and a smaller version in WebAssembly for browsers.
+
 ## Command line
 
 ```bash
