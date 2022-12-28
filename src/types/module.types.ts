@@ -14,7 +14,7 @@ export type SassFormats = 'expanded' | 'compressed';
 
 export type InputType = string | string[] | Uint8Array;
 export declare interface SassObject {
-  to_file(outputOptions: ExportOptions): boolean;
+  to_file(outputOptions: ExportOptions): Promise<boolean>;
   to_buffer(
     format?: SassFormats,
   ): false | Uint8Array | Map<string, string | Uint8Array>;
