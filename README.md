@@ -136,6 +136,17 @@ Denosass takes both arrays of string, strings and buffers, as shown here :
 const compile = sass(["path/to/some/folder", "path/to/file.scss"]);
 ```
 
+By default it will look for every .scss and .sass file in the subfolders, too. You can limit the depth of the search by setting the walkMaxDepth option.
+
+```ts
+// Here we are limiting the depth to 2, so it will only look for files in the folder and its direct subfolders
+const compile = sass(["path/to/some/folder"], {
+  walkMaxDepth: 2,
+});
+```
+
+```ts
+
 > ### ⚠️ PSA, Denosass perform no Content type check for the file / folder you use, it's entirely up to you. it will look for .scss and .sass file only, ⚠️
 
 Here is an example on how you can use a buffer

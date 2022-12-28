@@ -8,6 +8,7 @@ export type SassOptions = {
   load_paths?: string[];
   style?: SassFormats;
   quiet?: boolean;
+  walkMaxDepth?: number;
 };
 export type SassFormats = 'expanded' | 'compressed';
 
