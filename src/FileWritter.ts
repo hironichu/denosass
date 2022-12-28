@@ -10,9 +10,7 @@ export class FileWritter {
     }
     this.files.set(
       filePath,
-      this.files.has(filePath)
-        ? this.files.get(filePath) + data
-        : data
+      this.files.has(filePath) ? this.files.get(filePath) + data : data,
     );
   }
 
@@ -20,7 +18,7 @@ export class FileWritter {
     return Promise.all(
       Array.from(this.files).map(([filePath, data]) =>
         Deno.writeTextFile(filePath, data)
-      )
+      ),
     );
   }
 }
