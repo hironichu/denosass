@@ -83,6 +83,7 @@ class Sass implements SassObject {
       load_paths: [Deno.cwd()],
       style: 'compressed',
       quiet: true,
+      walkMaxDepth: Infinity,
     },
   ) {
     this.#input = input;
@@ -335,7 +336,7 @@ class Sass implements SassObject {
     }
     for (
       const entry of walkSync(this.#input as string, {
-        maxDepth: 1,
+        maxDepth: this.options.walkMaxDepth,
         includeDirs: false,
         exts: ['.scss', '.sass'],
       })
@@ -356,7 +357,7 @@ class Sass implements SassObject {
         this.#current.delete(filePath);
         for (
           const entry of walkSync(filePath, {
-            maxDepth: 1,
+            maxDepth: this.options.walkMaxDepth,
             exts: ['.scss', '.sass'],
           })
         ) {
