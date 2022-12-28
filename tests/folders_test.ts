@@ -6,7 +6,7 @@ Deno.test("main_test", async () => {
     style: "compressed"
   });
 
-  compiler.to_file({
+  await compiler.to_file({
     destDir: "./dist",
     format: "compressed"
   })
@@ -22,3 +22,22 @@ Deno.test("main_test", async () => {
     otehrmintext, "body{background-color:black}"
   )
 });
+
+Deno.test("main_test_append", async () => {
+  const compiler = sass(["./tests/folder"], {
+    style: "compressed"
+  });
+
+  await compiler.to_file({
+    destDir: "./dist",
+    format: "compressed",
+    destFile: "appended"
+  })
+
+  const globalmintext = await Deno.readTextFile("./dist/appended.min.css")
+
+  assertEquals(
+    globalmintext, "body{background-color:black}body{color:green}"
+  );
+});
+

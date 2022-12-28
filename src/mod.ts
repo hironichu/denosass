@@ -17,6 +17,8 @@ import {
   SassObject,
   SassOptions,
 } from './types/module.types.ts';
+import { FileWritter } from './FileWritter.ts';
+
 export const warn = (msg: string) =>
   console.warn(
     `🟡 %c[%cSass%c]%c ${msg}`,
@@ -51,8 +53,8 @@ export const log = (msg: string) =>
  */
 const exists = (filepath: string, check: 'file' | 'dir') => {
   try {
-    const pathurl = new URL(filepath, `file://${Deno.cwd()}/`);
-    const file = Deno.statSync(pathurl);
+    const absoluteFilePath = path.resolve(Deno.cwd(), filepath);
+    const file = Deno.statSync(absoluteFilePath);
     if (check === 'file') return file.isFile;
     else if (check === 'dir') return file.isDirectory;
     else return file.isFile;
@@ -65,7 +67,7 @@ class Sass implements SassObject {
   #input: InputType;
   // deno-lint-ignore no-explicit-any
   #inputFormat: any;
-  #current: URL | string | Map<string, string>;
+  #current: string | Map<string, string>;
   #mode: 'string' | 'file';
   public output: string | Map<string, string | Uint8Array> | Uint8Array;
   //
@@ -190,7 +192,7 @@ class Sass implements SassObject {
    * @name to_file
    * @description Outputs the finished data to file following output options
    */
-  public to_file(outputOptions: ExportOptions) {
+  public async to_file(outputOptions: ExportOptions) {
     if (outputOptions.destDir.length <= 0) {
       error(`The output dir string is empty`);
       Deno.exit(1);
@@ -215,6 +217,7 @@ class Sass implements SassObject {
     }
     // Processing the data
     this.to_string(outputOptions.format);
+    const fileWritter = new FileWritter();
     if (outputOptions.destFile) {
       const filepath = path.format({
         root: './',
@@ -222,28 +225,13 @@ class Sass implements SassObject {
         name: outputOptions.destFile,
         ext: outFileExt,
       });
-      const fileURL = new URL(filepath, `file://${Deno.cwd()}/`);
-      if (exists(filepath, 'file')) {
-        Deno.removeSync(fileURL);
-      }
+      const absoluteFilePath = path.resolve(Deno.cwd(), filepath);
       if (this.output instanceof Map) {
         this.output.forEach((ParsedCSs) => {
-          Deno.writeTextFileSync(
-            fileURL,
-            typeof ParsedCSs !== 'string'
-              ? this.decoder.decode(ParsedCSs)
-              : ParsedCSs,
-            { append: true, create: true, mode: 776 },
-          );
+          fileWritter.append(absoluteFilePath.toString(), ParsedCSs);
         });
       } else {
-        Deno.writeTextFileSync(
-          fileURL,
-          typeof this.output !== 'string'
-            ? this.decoder.decode(this.output)
-            : this.output,
-          { append: false, create: true, mode: 776 },
-        );
+        fileWritter.append(absoluteFilePath.toString(), this.output);
       }
     } else {
       if (this.output instanceof Map) {
@@ -254,17 +242,8 @@ class Sass implements SassObject {
             name: filename,
             ext: outFileExt,
           });
-          const fileURL = new URL(filepath, `file://${Deno.cwd()}/`);
-          if (exists(filepath, 'file')) {
-            Deno.removeSync(fileURL);
-          }
-          Deno.writeTextFileSync(
-            fileURL,
-            typeof ParsedCSs !== 'string'
-              ? this.decoder.decode(ParsedCSs)
-              : ParsedCSs,
-            { append: false, create: true, mode: 776 },
-          );
+          const absoluteFilePath = path.resolve(Deno.cwd(), filepath);
+          fileWritter.append(absoluteFilePath.toString(), ParsedCSs);
         });
       } else {
         const filepath = path.format({
@@ -273,19 +252,11 @@ class Sass implements SassObject {
           name: 'untitled',
           ext: outFileExt,
         });
-        const fileURL = new URL(filepath, `file://${Deno.cwd()}/`);
-        if (exists(filepath, 'file')) {
-          Deno.removeSync(fileURL);
-        }
-        Deno.writeTextFileSync(
-          fileURL,
-          typeof this.output !== 'string'
-            ? this.decoder.decode(this.output)
-            : this.output,
-          { append: false, create: true, mode: 776 },
-        );
+        const absoluteFilePath = path.resolve(Deno.cwd(), filepath);
+        fileWritter.append(absoluteFilePath.toString(), this.output);
       }
     }
+    await fileWritter.writeAll();
     return true;
   }
   /** */
@@ -318,11 +289,9 @@ class Sass implements SassObject {
     return this;
   }
   #processFile() {
-    const FilePath = new URL(
-      this.#input as string,
-      `file://${Deno.cwd()}/`,
-    );
-    const file = Deno.statSync(FilePath);
+    const absoluteFilePath = path.resolve(Deno.cwd(), this.#input as string);
+
+    const file = Deno.statSync(absoluteFilePath);
     if (file.size === 0) {
       error(`The file you want to read is empty.`);
     }
@@ -364,9 +333,9 @@ class Sass implements SassObject {
           this.#current.set(path.parse(entry.path).name, entry.path);
         }
       } else if (exists(filePath, 'file')) {
-        const fileURL = path.parse(filePath);
+        const absoluteFilePath = path.parse(filePath);
         this.#current = this.#current as Map<string, string>;
-        this.#current.set(fileURL.name, filePath);
+        this.#current.set(absoluteFilePath.name, filePath);
       } else {
         warn(
           `The File ${filePath.trim()} does not exist or is not a valid file`,
