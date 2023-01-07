@@ -86,6 +86,9 @@ class Sass implements SassObject {
       style: 'compressed',
       quiet: true,
       walkMaxDepth: Infinity,
+      input_syntax: 'scss',
+      unicode_error_messages: true,
+      allows_charset: true,
     },
   ) {
     this.#input = input;
@@ -97,6 +100,10 @@ class Sass implements SassObject {
       load_paths: options.load_paths || [Deno.cwd()],
       style: options.style || 'compressed',
       quiet: options.quiet || true,
+      walkMaxDepth: options.walkMaxDepth || Infinity,
+      input_syntax: options.input_syntax || 'scss',
+      unicode_error_messages: options.unicode_error_messages || true,
+      allows_charset: options.allows_charset || true,
     };
     return this.#checkType();
   }
@@ -115,12 +122,12 @@ class Sass implements SassObject {
     if (typeof this.#current === 'string' || this.#current instanceof Map) {
       if (this.#outmode === 1) {
         if (this.#mode === 'string') {
-          this.output = denosass.str(
+          this.output = denosass.from_string(
             this.#current as string,
             this.options,
           );
         } else {
-          this.output = denosass.file(
+          this.output = denosass.from_file(
             this.#current as string,
             this.options,
           );
@@ -131,7 +138,7 @@ class Sass implements SassObject {
             (acc, file) => {
               acc.set(
                 file[0],
-                denosass.file(file[1], this.options),
+                denosass.from_file(file[1], this.options),
               );
               return acc;
             },
@@ -160,11 +167,11 @@ class Sass implements SassObject {
     if (this.#outmode === 1) {
       if (this.#mode === 'string') {
         this.output = this.encoder.encode(
-          denosass.str(this.#current as string, this.options),
+          denosass.from_string(this.#current as string, this.options),
         );
       } else {
         this.output = this.encoder.encode(
-          denosass.file(this.#current as string, this.options),
+          denosass.from_file(this.#current as string, this.options),
         );
       }
     } else if (this.#outmode === 2) {
@@ -173,7 +180,7 @@ class Sass implements SassObject {
           acc.set(
             file[0],
             this.encoder.encode(
-              denosass.file(file[1], this.options),
+              denosass.from_file(file[1], this.options),
             ),
           );
           return acc;
