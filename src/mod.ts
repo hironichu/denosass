@@ -87,8 +87,8 @@ class Sass implements SassObject {
       quiet: true,
       walkMaxDepth: Infinity,
       input_syntax: 'scss',
-      unicode_error_messages: true,
-      allows_charset: true,
+      unicode_error_messages: false,
+      allows_charset: false,
     },
   ) {
     this.#input = input;
@@ -100,7 +100,6 @@ class Sass implements SassObject {
       load_paths: options.load_paths || [Deno.cwd()],
       style: options.style || 'compressed',
       quiet: options.quiet || true,
-      walkMaxDepth: options.walkMaxDepth || Infinity,
       input_syntax: options.input_syntax || 'scss',
       unicode_error_messages: options.unicode_error_messages || true,
       allows_charset: options.allows_charset || true,
