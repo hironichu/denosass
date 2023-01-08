@@ -1,16 +1,13 @@
+import { denosass } from "../deps.ts";
+
+const { JSOptions } = denosass;
 export type ExportOptions = {
   destDir: string;
   destFile?: string;
   format?: SassFormats;
 };
 export type SassOptions = {
-  load_paths?: string[];
-  style?: SassFormats;
-  quiet?: boolean;
   walkMaxDepth?: number;
-  input_syntax: InputSyntax;
-  unicode_error_messages?: boolean;
-  allows_charset?: boolean;
 };
 export type SassFormats = 'expanded' | 'compressed';
 
