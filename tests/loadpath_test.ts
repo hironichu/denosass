@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.125.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.170.0/testing/asserts.ts";
 import sass from "../mod.ts";
 
 Deno.test("main_test", () => {
@@ -9,6 +9,7 @@ Deno.test("main_test", () => {
       "./tests/lib/libscss",
     ],
     style: "compressed",
+    input_syntax: "scss",
   });
   assertEquals(
     sassexport.to_string(),
@@ -25,6 +26,7 @@ Deno.test("bootstrap_sass", () => {
       "./tests/lib/bootstrap",
     ],
     style: "compressed",
+    input_syntax: "scss",
   });
 
   const cssBootstrap = Deno.readTextFileSync("./tests/bootstrap.css");
@@ -42,6 +44,7 @@ Deno.test("bootstrap_sass_absolute", () => {
       `${testPath}lib/bootstrap`,
     ],
     style: "compressed",
+    input_syntax: "scss",
   });
 
   const cssBootstrap = Deno.readTextFileSync(`${testPath}bootstrap.css`);

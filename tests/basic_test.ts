@@ -1,4 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.125.0/testing/asserts.ts";
+import { assertEquals } from "https://deno.land/std@0.170.0/testing/asserts.ts";
 import sass from "../mod.ts";
 
 Deno.test("variable_test", () => {
@@ -16,6 +16,8 @@ body {
       load_paths: [],
       quiet: true,
       style: "compressed",
+      input_syntax: "scss",
+
     },
   );
   assertEquals(
@@ -37,6 +39,7 @@ $var2: "world";
       load_paths: [],
       quiet: true,
       style: "compressed",
+      input_syntax: "scss",
     },
   );
   assertEquals(from_files.to_string(), '.text{content:"hello world"}');
@@ -56,6 +59,7 @@ Deno.test("sass_function_test", () => {
       load_paths: [],
       quiet: true,
       style: "compressed",
+      input_syntax: "scss",
     },
   );
   assertEquals(from_files.to_string(), ".text{content:3}");
@@ -75,6 +79,7 @@ Deno.test("sass_function_test_2", () => {
       load_paths: [],
       quiet: true,
       style: "expanded",
+      input_syntax: "scss",
     },
   );
   assertEquals(
@@ -102,6 +107,7 @@ Deno.test("mixin_test", () => {
       load_paths: [],
       quiet: true,
       style: "compressed",
+      input_syntax: "scss",
     },
   );
   assertEquals(from_files.to_string(), ".text{color:red;font-size:10px}");

@@ -4,56 +4,11 @@
 > A Deno+Wasm Sass compiler
 ----
 
-Welcome to the new re-written Deno Sass module, with complete feature set
-(import, variables, functions, mixins, and even CLI !)
-
-I spent 24h updating the module to make it work, it now has a new name
-(previously Degrass) which I think sounds better.
-
-Please note that even tho I believe i have tested every test case for this, i
-don't know how good it can handle things..
+Welcome to the new re-written Deno Sass module, with almost complete feature set
+(import, variables, functions, mixins, and sass syntax!)
 
 I know that there are some errors that might now be shown at compile time, but
 no crash so far.
-
-## > ⚠️ This module will soon be re-writen with a new external library called Rsass, it will also be using FFI for the Deno port and a smaller version in WebAssembly for browsers.
-
-## Command line
-
-```bash
-# Install via 
-deno install --allow-env --allow-write --allow-read --allow-net --unstable -n denosass https://raw.githubusercontent.com/hironichu/denosass/main/cli.ts
-# Basic example
-
-# This will take every file in the dir (non recursively) and compile then while keeping their name and adding .min.css, into the ./out folder.
-denosass compile -f compressed -o ./out ./scssdir
-
-# This will compile only the main.scss file and output the content to ./out/main.min.css 
-denosass compile -f compressed -o ./out ./scssdir/main.scss
-
-# Denosass accepts multiple output, and will if set, combine them together, or just compile them as normal.
-denosass compile -f compressed -o ./out ./scssdir ./anotherfolder ./afile.scss
-
-# The above example will look for the first file in 
-# ./scssdir and ./anotherfolder , 
-# compile them while including the @imports and so on,
-# and will also compile the ./afile.scss to its own 
-# (if this file includes modules within the other folder, Denosass will include them.)
-
-#Last but not least, if you don't set -o (output dir) denosass will write content to the STDOUT. (using Deno.stdout.writeSync())
-denosass compile -f compressed ./some/folder ./or/some/file.scss
-
-#CLI Support also STDIN, if you set no argument you can use the Standard input to compile Sass.
-denosass compile
-🔵[DenoSass] Write your sass code to stdin and press CTRL-D to compile
-body {
-color:red;
-}
-body{color:red}%
-```
-
-Please note that if the output folder doesn't exist, Denosass will create it, if
-it exists, Denosass will empty it's content before creating new files.
 
 > Every CSS file created are read only file (644)
 
