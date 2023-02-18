@@ -15,34 +15,15 @@ import {
   InputType,
   SassFormats,
   SassObject,
-  InputSyntax
+  InputSyntax,
+JSOptionsType
 } from './types/module.types.ts';
 import { FileWritter } from './FileWritter.ts';
+import { JSOptions } from '../dist/grass_compiler.generated.js';
 
-export const warn = (msg: string) =>
-  console.warn(
-    `%c[%cSass%c]%c ${msg}`,
-    'color: yellow',
-    'color: orange',
-    'color: yellow',
-    'color: yellow;',
-  );
-export const error = (msg: string) =>
-  console.error(
-    `%c[%cSass%c]%c ${msg}`,
-    'color: yellow',
-    'color: red',
-    'color: yellow',
-    'color: red;',
-  );
-export const log = (msg: string) =>
-  console.log(
-    `%c[%cSass%c]%c ${msg}`,
-    'color: red',
-    'color: cyan',
-    'color: red',
-    'color: gray;',
-  );
+const log = console.log.bind(this);
+const error = console.error.bind(this);
+const warn = console.warn.bind(this);
 
 /**
  * @name exists
@@ -68,124 +49,126 @@ export const str = (input: InputType, options = denosass.get_config()) => {
   const parsed_input = typeof input === 'string' ? input : input.join('');
   return denosass.from_string(parsed_input, options);
 };
-export const file = (input: InputType, options = denosass.get_config()) => {
+export const file = (input: string | string[], options = denosass.get_config()) => {
   const parsed_input = typeof input === 'string' ? input : input.join('');
   return denosass.from_file(parsed_input, options);
 };
 
-export class Sass {
-  #input: InputType;
-  #current: string | Map<string, string>;
-  #mode: 'string' | 'file';
-  public output: string | Map<string, string | Uint8Array> | Uint8Array;
-  //
-  // Modes :
-  // 1 = StringMode , the input is a String
-  // 2 = SetMode, the input was a list of Element
-  #outmode: 0 | 1 | 2;
-  private readonly encoder = new TextEncoder();
-  private readonly decoder = new TextDecoder();
 
-  constructor(
-    input: InputType,
-    public options = 
-  ) {
-    this.#input = input;
-    this.#current = '';
-    this.#mode = 'file';
-    this.#outmode = 0;
-    this.output = '';
-    // return this.#checkType();
-  }
 
-  public build() {}
-  public watch() {}
-  #checkType() {
-    if (!(this.#input instanceof Uint8Array)) {
-      switch (typeof this.#input) {
-        case 'string':
-          {
-            if (exists(this.#input, 'file')) {
-              return this.#processFile();
-            } else if (exists(this.#input, 'dir')) {
-              return this.#processDir();
-            } else {
-              this.#mode = 'string';
-              this.#outmode = 1;
-              this.#current = this.#input;
-            }
-          }
-          break;
-        case 'object': {
-          return this.#processObject();
-        }
-        default:
-          return this;
-      }
-    } else {
-      this.#input = new TextDecoder().decode(this.#input);
-      this.#checkType();
-    }
-    return this;
-  }
-  #processFile() {
-    const absoluteFilePath = path.resolve(Deno.cwd(), this.#input as string);
+// export class Sass {
+//   #input: InputType;
+//   #current: string | Map<string, string>;
+//   #mode: 'string' | 'file';
+//   public output: string | Map<string, string | Uint8Array> | Uint8Array;
+//   //
+//   // Modes :
+//   // 1 = StringMode , the input is a String
+//   // 2 = SetMode, the input was a list of Element
+//   #outmode: 0 | 1 | 2;
+//   private readonly encoder = new TextEncoder();
+//   private readonly decoder = new TextDecoder();
 
-    const file = Deno.statSync(absoluteFilePath);
-    if (file.size === 0) {
-      error(`The file you want to read is empty.`);
-    }
-    this.#outmode = 1;
-    this.#current = this.#input as string;
-    return this;
-  }
-  #processDir() {
-    if (!(this.#current instanceof Map)) {
-      this.#current = new Map<string, string>();
-    }
-    for (
-      const entry of walkSync(this.#input as string, {
-        maxDepth: this.options.walkMaxDepth,
-        includeDirs: false,
-        exts: ['.scss', '.sass'],
-      })
-    ) {
-      this.#current.set(path.parse(entry.path).name, entry.path);
-    }
-    this.#outmode = 2;
-    return this;
-  }
-  #processObject() {
-    const urls = this.#input as string[];
-    if (!(this.#current instanceof Map)) {
-      this.#current = new Map<string, string>();
-    }
-    urls.map((filePath) => {
-      if (exists(filePath, 'dir')) {
-        this.#current = this.#current as Map<string, string>;
-        this.#current.delete(filePath);
-        for (
-          const entry of walkSync(filePath, {
-            maxDepth: this.options.walkMaxDepth,
-            exts: ['.scss', '.sass'],
-          })
-        ) {
-          this.#current.set(path.parse(entry.path).name, entry.path);
-        }
-      } else if (exists(filePath, 'file')) {
-        const absoluteFilePath = path.parse(filePath);
-        this.#current = this.#current as Map<string, string>;
-        this.#current.set(absoluteFilePath.name, filePath);
-      } else {
-        warn(
-          `The File ${filePath.trim()} does not exist or is not a valid file`,
-        );
-      }
-    });
-    this.#outmode = 2;
-    return this;
-  }
-}
+//   constructor(
+//     input: InputType,
+//     public options = new JSOptions as Partial<JSOptionsType>,
+//   ) {
+//     this.#input = input;
+//     this.#current = '';
+//     this.#mode = 'file';
+//     this.#outmode = 0;
+//     this.output = '';
+//     // return this.#checkType();
+//   }
+
+//   public build() {}
+//   public watch() {}
+//   #checkType() {
+//     if (!(this.#input instanceof Uint8Array)) {
+//       switch (typeof this.#input) {
+//         case 'string':
+//           {
+//             if (exists(this.#input, 'file')) {
+//               return this.#processFile();
+//             } else if (exists(this.#input, 'dir')) {
+//               return this.#processDir();
+//             } else {
+//               this.#mode = 'string';
+//               this.#outmode = 1;
+//               this.#current = this.#input;
+//             }
+//           }
+//           break;
+//         case 'object': {
+//           return this.#processObject();
+//         }
+//         default:
+//           return this;
+//       }
+//     } else {
+//       this.#input = new TextDecoder().decode(this.#input);
+//       this.#checkType();
+//     }
+//     return this;
+//   }
+//   #processFile() {
+//     const absoluteFilePath = path.resolve(Deno.cwd(), this.#input as string);
+
+//     const file = Deno.statSync(absoluteFilePath);
+//     if (file.size === 0) {
+//       error(`The file you want to read is empty.`);
+//     }
+//     this.#outmode = 1;
+//     this.#current = this.#input as string;
+//     return this;
+//   }
+//   #processDir() {
+//     if (!(this.#current instanceof Map)) {
+//       this.#current = new Map<string, string>();
+//     }
+//     for (
+//       const entry of walkSync(this.#input as string, {
+//         maxDepth: this.options.walkMaxDepth,
+//         includeDirs: false,
+//         exts: ['.scss', '.sass'],
+//       })
+//     ) {
+//       this.#current.set(path.parse(entry.path).name, entry.path);
+//     }
+//     this.#outmode = 2;
+//     return this;
+//   }
+//   #processObject() {
+//     const urls = this.#input as string[];
+//     if (!(this.#current instanceof Map)) {
+//       this.#current = new Map<string, string>();
+//     }
+//     urls.map((filePath) => {
+//       if (exists(filePath, 'dir')) {
+//         this.#current = this.#current as Map<string, string>;
+//         this.#current.delete(filePath);
+//         for (
+//           const entry of walkSync(filePath, {
+//             maxDepth: this.options.walkMaxDepth,
+//             exts: ['.scss', '.sass'],
+//           })
+//         ) {
+//           this.#current.set(path.parse(entry.path).name, entry.path);
+//         }
+//       } else if (exists(filePath, 'file')) {
+//         const absoluteFilePath = path.parse(filePath);
+//         this.#current = this.#current as Map<string, string>;
+//         this.#current.set(absoluteFilePath.name, filePath);
+//       } else {
+//         warn(
+//           `The File ${filePath.trim()} does not exist or is not a valid file`,
+//         );
+//       }
+//     });
+//     this.#outmode = 2;
+//     return this;
+//   }
+// }
 // class Sass implements SassObject {
 //   #input: InputType;
 //   // deno-lint-ignore no-explicit-any

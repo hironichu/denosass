@@ -21,3 +21,16 @@ export declare interface SassObject {
   ): false | Uint8Array | Map<string, string | Uint8Array>;
   to_string(format?: SassFormats): string | Map<string, string> | false;
 }
+
+
+export type JSOptionsType = {
+  allows_charset?: boolean;
+  load_paths?: string[];
+  quiet?: boolean;
+  style?: SassFormats;
+  input_syntax?: InputSyntax;
+  unicode_error_messages?: boolean;
+  walkMaxDepth: number;
+}
+
+

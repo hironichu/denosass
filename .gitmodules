@@ -1,3 +1,4 @@
 [submodule "grass"]
 	path = grass
 	url = https://github.com/hironichu/grass
+	branch = master
