@@ -4,6 +4,8 @@
 > A Deno+Wasm Sass compiler
 ----
 
+# No longer maintained.
+
 Welcome to the new re-written Deno Sass module, with complete feature set
 (import, variables, functions, mixins, and even CLI !)
 
